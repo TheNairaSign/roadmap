@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:roadmap/models/roadmap_model.dart';
@@ -60,16 +61,24 @@ class AppRouter {
       ),
     ],
     redirect: (BuildContext context, GoRouterState state) {
-      final bool loggedIn = authBloc.state.status == AuthStatus.authenticated;
+      final bool loggedIn = FirebaseAuth.instance.currentUser != null;
+      print('Login status: $loggedIn');
       final bool loggingIn = state.matchedLocation == '/login' || state.matchedLocation == '/signup';
 
       if (!loggedIn) {
+        print('User is not logged in, redirecting to login');
         return loggingIn ? null : '/login';
       }
 
-      if (loggingIn) {
+      if (state.matchedLocation == '/') {
+        print('User is logged in, redirecting to roadmaps');
         return '/roadmaps';
       }
+
+      // if (loggedIn) {
+      //   print('User is logged in, redirecting to roadmaps');
+      //   return '/roadmaps';
+      // }
 
       return null;
     },

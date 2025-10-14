@@ -2,6 +2,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:roadmap/models/user_model.dart';
 
 import 'package:roadmap/services/notification_service.dart';
 
@@ -19,6 +20,7 @@ class AuthService {
     try {
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
       if (googleUser == null) {
+        print('Google sign-in canceled');
         return null; // The user canceled the sign-in
       }
       final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
@@ -26,11 +28,12 @@ class AuthService {
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
+      print('Google sign-in successful with user: ${googleUser.displayName}');
       UserCredential userCredential = await _auth.signInWithCredential(credential);
       await _saveUserToFirestore(userCredential.user);
       return userCredential;
     } catch (e) {
-      print(e);
+      print('Error signing in with Google: $e');
       return null;
     }
   }
@@ -85,6 +88,19 @@ class AuthService {
       userRef.update({
         'fcmToken': fcmToken,
       });
+    }
+  }
+
+  Future<UserModel?> getUser(String uid) async {
+    try {
+      final doc = await _firestore.collection('users').doc(uid).get();
+      if (doc.exists) {
+        return UserModel.fromFirestore(doc);
+      }
+      return null;
+    } catch (e) {
+      print('Error fetching user: $e');
+      return null;
     }
   }
 }

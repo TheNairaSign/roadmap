@@ -13,12 +13,13 @@ class RoadmapListScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final user = context.select((AuthBloc bloc) => bloc.state.user);
+    debugPrint('User ID: ${user?.uid}');
 
     return BlocProvider(
       create: (context) => RoadmapListBloc(
         roadmapRepository: context.read<RoadmapRepository>(),
-        userId: user!.uid,
-      )..add(LoadRoadmaps(user.uid)),
+        userId: user?.uid ?? '',
+      )..add(LoadRoadmaps(user?.uid ?? '')),
       child: Scaffold(
         appBar: AppBar(
           title: const Text('My Roadmaps'),
@@ -26,7 +27,7 @@ class RoadmapListScreen extends StatelessWidget {
             IconButton(
               icon: const Icon(Icons.collections_bookmark),
               onPressed: () {
-                context.go('/templates');
+                context.push('/templates');
               },
             ),
             IconButton(
@@ -38,8 +39,10 @@ class RoadmapListScreen extends StatelessWidget {
         body: BlocBuilder<RoadmapListBloc, RoadmapListState>(
           builder: (context, state) {
             if (state is RoadmapListLoading) {
+              debugPrint('Loading roadmaps');
               return const Center(child: CircularProgressIndicator());
             } else if (state is RoadmapListLoaded) {
+              debugPrint('Loaded ${state.roadmaps.length} roadmaps');
               if (state.roadmaps.isEmpty) {
                 return const Center(child: Text('No roadmaps yet. Create one!'));
               }
@@ -50,7 +53,7 @@ class RoadmapListScreen extends StatelessWidget {
                   return RoadmapListItem(
                     roadmap: roadmap,
                     onTap: () {
-                      context.go('/roadmaps/${roadmap.id}', extra: roadmap);
+                      context.push('/roadmaps/${roadmap.id}', extra: roadmap);
                     },
                   );
                 },
@@ -64,7 +67,7 @@ class RoadmapListScreen extends StatelessWidget {
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            context.go('/create-roadmap');
+            context.push('/create-roadmap');
           },
           child: const Icon(Icons.add),
         ),

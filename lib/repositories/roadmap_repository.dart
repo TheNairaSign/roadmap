@@ -2,6 +2,7 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 import '../models/milestone_model.dart';
 import '../models/roadmap_model.dart';
 import '../services/firestore_service.dart';
@@ -14,8 +15,10 @@ class RoadmapRepository {
 
   // Roadmap operations
   Stream<List<RoadmapModel>> getRoadmaps(String uid) {
+    final path = 'users/$uid/roadmaps';
+    debugPrint('Get roadmap path: $path');
     return _firestoreService.getCollection<RoadmapModel>(
-      path: 'users/$uid/roadmaps',
+      path: path,
       builder: (doc) => RoadmapModel.fromFirestore(doc),
     );
   }
@@ -41,6 +44,7 @@ class RoadmapRepository {
   // Milestone operations
   Stream<List<MilestoneModel>> getMilestones(String uid, String roadmapId) {
     final path = 'users/$uid/roadmaps/$roadmapId/milestones';
+    debugPrint('Get milestone path: $path');
     return _firestoreService.getCollection<MilestoneModel>(
       path: path,
       builder: (doc) => MilestoneModel.fromFirestore(doc),

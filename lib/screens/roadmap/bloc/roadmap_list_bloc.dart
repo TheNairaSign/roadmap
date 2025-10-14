@@ -3,6 +3,7 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:roadmap/models/roadmap_model.dart';
 import 'package:roadmap/repositories/roadmap_repository.dart';
 
@@ -27,8 +28,9 @@ class RoadmapListBloc extends Bloc<RoadmapListEvent, RoadmapListState> {
 
   void _onLoadRoadmaps(LoadRoadmaps event, Emitter<RoadmapListState> emit) {
     emit(RoadmapListLoading());
+    final userId = event.userId.isEmpty ? FirebaseAuth.instance.currentUser!.uid : event.userId;
     _roadmapsSubscription?.cancel();
-    _roadmapsSubscription = _roadmapRepository.getRoadmaps(event.userId).listen(
+    _roadmapsSubscription = _roadmapRepository.getRoadmaps(userId).listen(
           (roadmaps) => add(RoadmapsUpdated(roadmaps)),
           onError: (error) => emit(RoadmapListError(error.toString())),
         );
