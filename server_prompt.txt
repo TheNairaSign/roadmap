@@ -1,0 +1,119 @@
+Title:
+
+Dart Backend Server for Roadmap Tracker App with Web Scraping and Firebase Integration
+
+Prompt:
+
+You are an expert full-stack Dart developer.
+Build a Dart backend server (can be implemented as either a shelf server or a Firebase Function) for a Flutter app called Roadmap Tracker.
+
+The backend’s core purpose is to:
+
+Scrape and standardize roadmap data (starting with https://roadmap.sh
+).
+
+Convert the scraped data into a normalized JSON roadmap schema.
+
+Store and retrieve user progress and imported roadmaps from Firebase Firestore.
+
+🧩 Functional Requirements
+
+Endpoints:
+
+1. POST /import-roadmap
+
+Input:
+
+{
+  "url": "https://roadmap.sh/frontend"
+}
+
+
+Process:
+
+Detects domain (roadmap.sh for now).
+
+Fetches and parses the page HTML.
+
+Extracts:
+
+Roadmap title
+
+Milestones / topics / subtopics
+
+Links / references
+
+Cleans data into a JSON roadmap schema:
+
+{
+  "title": "Frontend Developer",
+  "source": "roadmap.sh",
+  "milestones": [
+    {
+      "name": "Learn HTML",
+      "status": "not started",
+      "resources": ["https://developer.mozilla.org/..."]
+    }
+  ]
+}
+
+
+Saves this roadmap to Firebase Firestore under roadmaps/{id}.
+
+Output:
+
+{
+  "success": true,
+  "roadmapId": "abc123",
+  "data": { ...normalizedRoadmap }
+}
+
+2. GET /roadmaps
+
+Returns all public or user-imported roadmaps.
+
+3. POST /progress
+
+Updates user progress for a specific roadmap milestone.
+
+⚙️ Technical Stack
+
+Language: Dart
+
+Server Framework: shelf (or Firebase Functions for Dart)
+
+Dependencies:
+
+http (for fetching HTML)
+
+html (for parsing)
+
+firebase_admin (for Firestore integration)
+
+shelf_router (for REST routing)
+
+dotenv (for managing environment variables)
+
+Data Storage: Firebase Firestore
+
+Deployment: Cloud Run or Firebase Functions
+
+🧱 Folder Structure (Simple & Scalable)
+server/
+ ├── bin/
+ │    └── server.dart          # Entry point
+ ├── lib/
+ │    ├── routers/
+ │    │    ├── roadmap_router.dart
+ │    │    └── progress_router.dart
+ │    ├── services/
+ │    │    ├── roadmap_scraper.dart
+ │    │    ├── firestore_service.dart
+ │    │    └── roadmap_parser.dart
+ │    ├── models/
+ │    │    └── roadmap_model.dart
+ │    └── utils/
+ │         └── response_handler.dart
+ ├── pubspec.yaml
+ ├── .env
+ └── README.md

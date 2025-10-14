@@ -6,6 +6,8 @@ import 'package:roadmap/firebase_options.dart';
 import 'package:roadmap/repositories/auth_repository.dart';
 import 'package:roadmap/repositories/roadmap_repository.dart';
 import 'package:roadmap/screens/auth/bloc/auth_bloc.dart';
+import 'package:roadmap/screens/new_roadmap_screen.dart';
+import 'package:roadmap/screens/roadmap_display.dart';
 import 'package:roadmap/services/notification_service.dart';
 import 'package:roadmap/utils/router.dart';
 
@@ -36,7 +38,9 @@ class MyApp extends StatelessWidget {
           builder: (context) {
             final authBloc = context.watch<AuthBloc>();
             final router = AppRouter(authBloc).router;
-            return MaterialApp.router(
+            return MaterialApp(
+              debugShowCheckedModeBanner: false,
+              home: RoadmapScreen(),
               title: 'Roadmap App',
               theme: ThemeData(
                 primarySwatch: Colors.blue,
@@ -45,8 +49,18 @@ class MyApp extends StatelessWidget {
                 ),
                 visualDensity: VisualDensity.adaptivePlatformDensity,
               ),
-              routerConfig: router,
             );
+            // return MaterialApp.router(
+            //   title: 'Roadmap App',
+            //   theme: ThemeData(
+            //     primarySwatch: Colors.blue,
+            //     textTheme: GoogleFonts.latoTextTheme(
+            //       Theme.of(context).textTheme,
+            //     ),
+            //     visualDensity: VisualDensity.adaptivePlatformDensity,
+            //   ),
+            //   routerConfig: router,
+            // );
           },
         ),
       ),
